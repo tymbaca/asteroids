@@ -42,12 +42,35 @@ Asteroid :: struct #packed {
 
 asteroid_update :: proc(a: ^Asteroid, delta: time.Duration) {
 	a.position += a.direction * _asteroid_speed_factor / a.radius
+
+	for rocket in _rockets {
+		distance := rl.Vector2Distance(a.position, rocket.position)
+		if distance <= a.radius {
+			asteroid_split(a^)
+		}
+	}
+
+	if is_out_of_bounds(a.position) {
+		find_and_remove(&_asteroids, a^)
+	}
 }
 
 asteroid_render :: proc(a: Asteroid) {
 	rl.DrawCircleV(a.position, a.radius, rl.GRAY)
 }
 
-random_direction :: proc() -> rl.Vector2 {
-	return rl.Vector2Normalize({rand.float32_range(-1, 1), rand.float32_range(-1, 1)})
+asteroid_split :: proc(a: Asteroid) {
+	find_and_remove(&_asteroids, a)
+	a1 := Asteroid {
+		position  = a.position,
+		radius    = a.radius / 2,
+		direction = random_direction(),
+	}
+	a2 := Asteroid {
+		position  = a.position,
+		radius    = a.radius / 2,
+		direction = random_direction(),
+	}
+
+	append(&_asteroids, a1, a2)
 }
