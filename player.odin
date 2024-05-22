@@ -14,6 +14,13 @@ Player :: struct {
 }
 
 player_update :: proc(p: ^Player, delta: f32) {
+	if rl.IsKeyPressed(.SPACE) {
+		append(
+			&_rockets,
+			Rocket{position = p.position, direction = rl.Vector2Rotate(UP, p.rotation)},
+		)
+	}
+
 	// movement
 	diff: rl.Vector2 = {}
 	if rl.IsKeyDown(.W) {

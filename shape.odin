@@ -2,7 +2,4 @@ package main
 
 import rl "vendor:raylib"
 
-Shape :: struct {
-	pos: rl.Vector2,
-	rot: f32,
-}
+UP := rl.Vector2{0, -1}
