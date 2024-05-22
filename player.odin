@@ -1,5 +1,6 @@
 package main
 
+import "core:time"
 import rl "vendor:raylib"
 
 _player_size: f32 = 20
@@ -13,7 +14,9 @@ Player :: struct {
 	rotation: f32,
 }
 
-player_update :: proc(p: ^Player, delta: f32) {
+// TODO: 
+// - limit out of bounds
+player_update :: proc(p: ^Player, delta: time.Duration) {
 	if rl.IsKeyPressed(.SPACE) {
 		append(
 			&_rockets,

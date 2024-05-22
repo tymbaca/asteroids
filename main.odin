@@ -6,8 +6,12 @@ import rl "vendor:raylib"
 _screenWidth: i32 = 640
 _screenHeight: i32 = 480
 
+// TODO: sometimes pack the array
 _rockets: [dynamic]Rocket
 _asteroids: [dynamic]Asteroid
+_asteroid_manager := AsteroidManager {
+	last_tick = time.tick_now(),
+}
 _player := Player {
 	position = {320, 240},
 }
@@ -19,7 +23,7 @@ main :: proc() {
 
 	stopwatch := time.Stopwatch{}
 	for !rl.WindowShouldClose() {
-		delta := f32(time.duration_seconds(time.stopwatch_duration(stopwatch)))
+		delta := time.stopwatch_duration(stopwatch)
 		time.stopwatch_reset(&stopwatch)
 		time.stopwatch_start(&stopwatch)
 
@@ -28,8 +32,9 @@ main :: proc() {
 	}
 }
 
-update_game :: proc(delta: f32) {
+update_game :: proc(delta: time.Duration) {
 	update(&_player, delta)
+	update(&_asteroid_manager)
 
 	for &rocket in _rockets {
 		update(&rocket, delta)
@@ -39,6 +44,7 @@ update_game :: proc(delta: f32) {
 		update(&asteroid, delta)
 	}
 }
+
 render_game :: proc() {
 	rl.BeginDrawing()
 	rl.ClearBackground(rl.BLACK)
@@ -53,6 +59,8 @@ render_game :: proc() {
 		render(asteroid)
 	}
 
+	draw_stats()
+
 	rl.EndDrawing()
 }
 
@@ -60,6 +68,7 @@ update :: proc {
 	player_update,
 	rocket_update,
 	asteroid_update,
+	asteroid_manager_update,
 }
 
 render :: proc {
