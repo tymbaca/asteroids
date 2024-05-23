@@ -5,13 +5,14 @@ import rl "vendor:raylib"
 
 _player_size: f32 = 20
 _player_speed: f32 = 0.6
-_player_rotation_speed: f32 = 0.1
+_player_rotation_speed: f32 = 0.06
 _player_width_factor: f32 = 1
 
 Player :: struct {
 	position: rl.Vector2,
 	force:    rl.Vector2,
 	rotation: f32,
+	dead:     bool,
 }
 
 // TODO: 
@@ -57,13 +58,32 @@ player_update :: proc(p: ^Player, delta: time.Duration) {
 
 	// apply force 
 	p.position += p.force
+
+	//--------------------------------------------------------------------------------------------------
+	// Detect asteroid collisions
+	//--------------------------------------------------------------------------------------------------
+	for asteroid in _asteroids {
+		if rl.Vector2Distance(p.position, asteroid.position) <= _player_size + asteroid.radius {
+			player_die(p)
+		}
+	}
 }
 
 player_render :: proc(p: Player) {
-	rl.DrawTriangle(
-		p.position + rl.Vector2Rotate(rl.Vector2Normalize({0, -1}), p.rotation) * _player_size,
-		p.position + rl.Vector2Rotate(rl.Vector2Normalize({-1, 1}), p.rotation) * _player_size,
-		p.position + rl.Vector2Rotate(rl.Vector2Normalize({1, 1}), p.rotation) * _player_size,
-		rl.WHITE,
-	)
+	if !p.dead {
+		rl.DrawTriangle(
+			p.position + rl.Vector2Rotate(rl.Vector2Normalize({0, -1}), p.rotation) * _player_size,
+			p.position + rl.Vector2Rotate(rl.Vector2Normalize({-1, 1}), p.rotation) * _player_size,
+			p.position + rl.Vector2Rotate(rl.Vector2Normalize({1, 1}), p.rotation) * _player_size,
+			rl.WHITE,
+		)
+	}
+
+	if p.dead {
+		rl.DrawText("GAME OVER", _screenWidth / 2 - 100, _screenHeight / 2, 30, rl.WHITE)
+	}
+}
+
+player_die :: proc(p: ^Player) {
+	p.dead = true
 }

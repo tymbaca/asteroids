@@ -5,8 +5,9 @@ import "core:time"
 import rl "vendor:raylib"
 
 _asteroid_spawn_interval: time.Duration = 4 * time.Second
-_asteroid_speed_factor: f32 = 40
+_asteroid_speed_factor: f32 = 60
 _asteroid_start_radius: f32 = 80
+_asteroid_minimal_radius: f32 = 20
 
 AsteroidManager :: struct {
 	last_tick: time.Tick,
@@ -46,7 +47,7 @@ asteroid_update :: proc(a: ^Asteroid, delta: time.Duration) {
 	for rocket in _rockets {
 		distance := rl.Vector2Distance(a.position, rocket.position)
 		if distance <= a.radius {
-			asteroid_split(a^)
+			asteroid_split(a^, rocket)
 		}
 	}
 
@@ -59,16 +60,23 @@ asteroid_render :: proc(a: Asteroid) {
 	rl.DrawCircleV(a.position, a.radius, rl.GRAY)
 }
 
-asteroid_split :: proc(a: Asteroid) {
+asteroid_split :: proc(a: Asteroid, r: Rocket) {
 	find_and_remove(&_asteroids, a)
+	find_and_remove(&_rockets, r)
+	// TODO: random number of peaces
+
+	if a.radius <= _asteroid_minimal_radius {
+		return
+	}
+
 	a1 := Asteroid {
 		position  = a.position,
-		radius    = a.radius / 2,
+		radius    = a.radius * 0.75,
 		direction = random_direction(),
 	}
 	a2 := Asteroid {
 		position  = a.position,
-		radius    = a.radius / 2,
+		radius    = a.radius * 0.75,
 		direction = random_direction(),
 	}
 

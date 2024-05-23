@@ -12,7 +12,9 @@ _asteroids: [dynamic]Asteroid
 _asteroid_manager := AsteroidManager {
 	last_tick = time.tick_now(),
 }
-_player := Player {
+_player := _default_player
+
+_default_player := Player {
 	position = {320, 240},
 }
 
@@ -42,6 +44,12 @@ update_game :: proc(delta: time.Duration) {
 
 	for &asteroid in _asteroids {
 		update(&asteroid, delta)
+	}
+
+	if _player.dead && rl.IsKeyPressed(.ENTER) {
+		_player = _default_player
+		clear(&_asteroids)
+		clear(&_rockets)
 	}
 }
 
