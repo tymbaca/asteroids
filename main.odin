@@ -23,11 +23,10 @@ main :: proc() {
 	rl.InitWindow(_screenWidth, _screenHeight, "asteroids")
 	rl.SetTargetFPS(60)
 
-	stopwatch := time.Stopwatch{}
+	tick := time.tick_now()
 	for !rl.WindowShouldClose() {
-		delta := time.stopwatch_duration(stopwatch)
-		time.stopwatch_reset(&stopwatch)
-		time.stopwatch_start(&stopwatch)
+		delta := time.tick_since(tick)
+		tick := time.tick_now()
 
 		update_game(delta)
 		render_game()
@@ -67,7 +66,12 @@ render_game :: proc() {
 		render(asteroid)
 	}
 
+	if _player.dead {
+		rl.DrawText("GAME OVER", _screenWidth / 2 - 100, _screenHeight / 2, 30, rl.WHITE)
+	}
+
 	draw_stats()
+	rl.DrawFPS(15, 40)
 
 	rl.EndDrawing()
 }

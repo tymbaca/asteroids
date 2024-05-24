@@ -27,25 +27,25 @@ player_update :: proc(p: ^Player, delta: time.Duration) {
 
 	// movement
 	diff: rl.Vector2 = {}
-	if rl.IsKeyDown(.W) {
+	if rl.IsKeyDown(MOVE_UP) {
 		diff += {0, -1}
 	}
-	if rl.IsKeyDown(.S) {
+	if rl.IsKeyDown(MOVE_DOWN) {
 		diff += {0, 1}
 	}
-	if rl.IsKeyDown(.A) {
+	if rl.IsKeyDown(MOVE_LEFT) {
 		diff += {-1, 0}
 	}
-	if rl.IsKeyDown(.D) {
+	if rl.IsKeyDown(MOVE_RIGHT) {
 		diff += {1, 0}
 	}
 
 	// rotation
 	rot_diff: f32
-	if rl.IsKeyDown(.H) {
+	if rl.IsKeyDown(ROTATE_LEFT) {
 		rot_diff -= _player_rotation_speed
 	}
-	if rl.IsKeyDown(.L) {
+	if rl.IsKeyDown(ROTATE_RIGHT) {
 		rot_diff += _player_rotation_speed
 	}
 	p.rotation += rot_diff
@@ -77,10 +77,6 @@ player_render :: proc(p: Player) {
 			p.position + rl.Vector2Rotate(rl.Vector2Normalize({1, 1}), p.rotation) * _player_size,
 			rl.WHITE,
 		)
-	}
-
-	if p.dead {
-		rl.DrawText("GAME OVER", _screenWidth / 2 - 100, _screenHeight / 2, 30, rl.WHITE)
 	}
 }
 
