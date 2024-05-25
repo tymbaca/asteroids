@@ -4,23 +4,25 @@ import "core:time"
 import rl "vendor:raylib"
 
 _player_size: f32 = 20
+_player_hitbox_radius: f32 = 14
 _player_speed: f32 = 0.6
 _player_rotation_speed: f32 = 0.06
 _player_width_factor: f32 = 1
 _player_max_fuil: f32 = 100
 
-_player_movement_cost: f32 = 0.3
-_player_shoot_cost: f32 = 0.2
-_player_asteroid_destroy_cost: f32 = 1.5
+_player_movement_cost: f32 = 0.5
+_player_shoot_cost: f32 = 0.3
+_player_asteroid_destroy_cost: f32 = 1.7
 
 Player :: struct {
-	position: rl.Vector2,
-	size:     f32,
-	force:    rl.Vector2,
-	rotation: f32,
-	dead:     bool,
-	fuil:     f32,
-	max_fuil: f32,
+	position:      rl.Vector2,
+	size:          f32,
+	hitbox_radius: f32,
+	force:         rl.Vector2,
+	rotation:      f32,
+	dead:          bool,
+	fuil:          f32,
+	max_fuil:      f32,
 }
 
 player_update :: proc(p: ^Player, delta: time.Duration) {
@@ -84,7 +86,8 @@ player_update :: proc(p: ^Player, delta: time.Duration) {
 	//--------------------------------------------------------------------------------------------------
 	if !GOD_MODE {
 		for asteroid in _asteroids {
-			if rl.Vector2Distance(p.position, asteroid.position) <= p.size + asteroid.radius {
+			if rl.Vector2Distance(p.position, asteroid.position) <=
+			   p.hitbox_radius + asteroid.radius {
 				player_die(p)
 			}
 		}

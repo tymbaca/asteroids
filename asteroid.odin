@@ -101,6 +101,8 @@ asteroid_render :: proc(a: Asteroid) {
 
 asteroid_split :: proc(a: Asteroid, r: Rocket) {
 	_player.fuil += _player_asteroid_destroy_cost
+	if _player.fuil > _player.max_fuil do _player.fuil = _player.max_fuil
+
 	find_and_remove(&_asteroids, a)
 	find_and_remove(&_rockets, r)
 	// TODO: random number of peaces

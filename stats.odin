@@ -1,6 +1,7 @@
 package main
 
 import "core:fmt"
+import "core:time"
 import rl "vendor:raylib"
 
 PADDING: f32 : 10
@@ -13,6 +14,10 @@ FUIL_RECT := rl.Rectangle {
 	y      = PADDING,
 	width  = FUIL_RECT_WIDTH,
 	height = FUIL_RECT_HEIGTH,
+}
+
+update_score :: proc(delta: time.Duration) {
+	_score += 1
 }
 
 draw_stats :: proc() {

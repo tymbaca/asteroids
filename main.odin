@@ -21,10 +21,11 @@ _default_asteroid_manager := AsteroidManager {
 
 _player := _default_player
 _default_player := Player {
-	position = {320, 240},
-	size     = _player_size,
-	max_fuil = _player_max_fuil,
-	fuil     = _player_max_fuil,
+	position      = {320, 240},
+	size          = _player_size,
+	hitbox_radius = _player_hitbox_radius,
+	max_fuil      = _player_max_fuil,
+	fuil          = _player_max_fuil,
 }
 
 
@@ -52,6 +53,10 @@ update_game :: proc(delta: time.Duration) {
 
 	for &asteroid in _asteroids {
 		update(&asteroid, delta)
+	}
+
+	if !_player.dead {
+		update_score(delta)
 	}
 
 	if _player.dead && rl.IsKeyPressed(.ENTER) {
@@ -96,10 +101,10 @@ render :: proc {
 }
 
 restart_game :: proc() {
-	_score = 0
 	if _score > _best_score {
 		_best_score = _score
 	}
+	_score = 0
 
 	_player = _default_player
 	_asteroid_manager = _default_asteroid_manager
