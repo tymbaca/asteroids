@@ -16,8 +16,18 @@ FUIL_RECT := rl.Rectangle {
 	height = FUIL_RECT_HEIGTH,
 }
 
+_score_update_sound: rl.Sound
+_beat_score_record_sound: rl.Sound
+
 update_score :: proc(delta: time.Duration) {
 	_score += 1
+
+	if _score % 500 == 0 {
+		rl.PlaySound(_score_update_sound)
+	}
+	if _score == _best_score {
+		rl.PlaySound(_beat_score_record_sound)
+	}
 }
 
 draw_stats :: proc() {

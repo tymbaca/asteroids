@@ -10,9 +10,11 @@ _player_rotation_speed: f32 = 0.06
 _player_width_factor: f32 = 1
 _player_max_fuil: f32 = 100
 
-_player_movement_cost: f32 = 0.5
+_player_movement_cost: f32 = 0.36
 _player_shoot_cost: f32 = 0.3
 _player_asteroid_destroy_cost: f32 = 1.7
+
+_player_death_sound: rl.Sound
 
 Player :: struct {
 	position:      rl.Vector2,
@@ -26,7 +28,7 @@ Player :: struct {
 }
 
 player_update :: proc(p: ^Player, delta: time.Duration) {
-	if rl.IsKeyPressed(.SPACE) && p.fuil > 0 {
+	if rl.IsKeyPressed(.SPACE) && p.fuil > 0 && !p.dead {
 		append(
 			&_rockets,
 			Rocket{position = p.position, direction = rl.Vector2Rotate(UP, p.rotation)},
@@ -84,7 +86,7 @@ player_update :: proc(p: ^Player, delta: time.Duration) {
 	//--------------------------------------------------------------------------------------------------
 	// Detect asteroid collisions
 	//--------------------------------------------------------------------------------------------------
-	if !GOD_MODE {
+	if !GOD_MODE && !p.dead {
 		for asteroid in _asteroids {
 			if rl.Vector2Distance(p.position, asteroid.position) <=
 			   p.hitbox_radius + asteroid.radius {
@@ -109,5 +111,6 @@ player_render :: proc(p: Player) {
 }
 
 player_die :: proc(p: ^Player) {
+	rl.PlaySound(_player_death_sound)
 	p.dead = true
 }

@@ -11,6 +11,10 @@ _asteroid_start_radius: f32 = 50
 _asteroid_minimal_radius: f32 = 30 // Smaller = Harder
 _asteroid_spawn_safe_distance: f32 = 80
 
+_asteroid_new_speed_miltiplier: f32 = 2
+
+_asteroid_destroy_sounds: []rl.Sound
+
 AsteroidManager :: struct {
 	last_tick: time.Tick,
 	count:     int,
@@ -28,7 +32,8 @@ asteroid_manager_update :: proc(am: ^AsteroidManager) {
 				direction = random_direction(),
 				radius = _asteroid_start_radius + rand.float32_range(-10, 10),
 				min_radius = _asteroid_minimal_radius,
-				speed_factor = _asteroid_speed_factor + f32(am.count),
+				speed_factor = _asteroid_speed_factor +
+				f32(am.count) * _asteroid_new_speed_miltiplier,
 			},
 		)
 	}
@@ -105,7 +110,8 @@ asteroid_split :: proc(a: Asteroid, r: Rocket) {
 
 	find_and_remove(&_asteroids, a)
 	find_and_remove(&_rockets, r)
-	// TODO: random number of peaces
+
+	rl.PlaySound(rand.choice(_asteroid_destroy_sounds))
 
 	if a.radius <= _asteroid_minimal_radius {
 		return

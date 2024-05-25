@@ -28,10 +28,34 @@ _default_player := Player {
 	fuil          = _player_max_fuil,
 }
 
+_paused: bool = false
 
-main :: proc() {
+load_resources :: #force_inline proc() {
 	rl.InitWindow(_screenWidth, _screenHeight, "asteroids")
 	rl.SetTargetFPS(60)
+	rl.InitAudioDevice()
+	rl.SetExitKey(.KEY_NULL)
+
+	//--------------------------------------------------------------------------------------------------
+	// AUDIO
+	//--------------------------------------------------------------------------------------------------
+	_player_death_sound = rl.LoadSound("resources/death.wav")
+	_asteroid_destroy_sounds = []rl.Sound {
+		rl.LoadSound("resources/asteroid_destroy1.wav"),
+		rl.LoadSound("resources/asteroid_destroy2.wav"),
+		rl.LoadSound("resources/asteroid_destroy3.wav"),
+	}
+	_score_update_sound = rl.LoadSound("resources/score.wav")
+	_beat_score_record_sound = rl.LoadSound("resources/beat_record.wav")
+
+	for s in _asteroid_destroy_sounds {
+		rl.SetSoundVolume(s, 0.45)
+	}
+	rl.SetSoundVolume(_score_update_sound, 0.35)
+}
+
+main :: proc() {
+	load_resources()
 
 	tick := time.tick_now()
 	for !rl.WindowShouldClose() {
@@ -41,9 +65,20 @@ main :: proc() {
 		update_game(delta)
 		render_game()
 	}
+
+	// TODO: deinit all
 }
 
 update_game :: proc(delta: time.Duration) {
+	// TODO: pause
+	if rl.IsKeyReleased(.ESCAPE) {
+		_paused = !_paused
+	}
+
+	if _paused {
+		return
+	}
+
 	update(&_player, delta)
 	update(&_asteroid_manager)
 
@@ -66,7 +101,11 @@ update_game :: proc(delta: time.Duration) {
 
 render_game :: proc() {
 	rl.BeginDrawing()
+
 	rl.ClearBackground(rl.BLACK)
+	if _paused {
+		return
+	}
 
 	render(_player)
 
