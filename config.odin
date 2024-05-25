@@ -9,3 +9,5 @@ MOVE_UP: rl.KeyboardKey : .W
 MOVE_LEFT: rl.KeyboardKey : .A
 MOVE_DOWN: rl.KeyboardKey : .S
 MOVE_RIGHT: rl.KeyboardKey : .D
+
+GOD_MODE :: false

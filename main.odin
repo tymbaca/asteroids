@@ -1,21 +1,30 @@
 package main
 
+import "core:fmt"
 import "core:time"
 import rl "vendor:raylib"
 
 _screenWidth: i32 = 640
 _screenHeight: i32 = 480
 
-// TODO: sometimes pack the array
+_score: i32 = 0
+_best_score: i32 = 0
+
 _rockets: [dynamic]Rocket
+
 _asteroids: [dynamic]Asteroid
-_asteroid_manager := AsteroidManager {
+
+_asteroid_manager := _default_asteroid_manager
+_default_asteroid_manager := AsteroidManager {
 	last_tick = time.tick_now(),
 }
-_player := _default_player
 
+_player := _default_player
 _default_player := Player {
 	position = {320, 240},
+	size     = _player_size,
+	max_fuil = _player_max_fuil,
+	fuil     = _player_max_fuil,
 }
 
 
@@ -46,9 +55,7 @@ update_game :: proc(delta: time.Duration) {
 	}
 
 	if _player.dead && rl.IsKeyPressed(.ENTER) {
-		_player = _default_player
-		clear(&_asteroids)
-		clear(&_rockets)
+		restart_game()
 	}
 }
 
@@ -71,7 +78,6 @@ render_game :: proc() {
 	}
 
 	draw_stats()
-	rl.DrawFPS(15, 40)
 
 	rl.EndDrawing()
 }
@@ -87,4 +93,16 @@ render :: proc {
 	player_render,
 	rocket_render,
 	asteroid_render,
+}
+
+restart_game :: proc() {
+	_score = 0
+	if _score > _best_score {
+		_best_score = _score
+	}
+
+	_player = _default_player
+	_asteroid_manager = _default_asteroid_manager
+	clear(&_asteroids)
+	clear(&_rockets)
 }
