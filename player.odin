@@ -11,7 +11,7 @@ _player_width_factor: f32 = 1
 _player_max_fuil: f32 = 100
 
 _player_movement_cost: f32 = 0.36
-_player_shoot_cost: f32 = 0.3
+_player_shoot_cost: f32 = 0.5
 _player_asteroid_destroy_cost: f32 = 1.7
 
 _player_death_sound: rl.Sound
